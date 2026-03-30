@@ -23,7 +23,10 @@ _LOGGER = logging.getLogger(__name__)
 # Map PoinTT unitOfMeasure to HA device class / unit / state class
 UNIT_MAP: dict[str, tuple[SensorDeviceClass | None, str | None, SensorStateClass | None]] = {
     "C_DEG": (SensorDeviceClass.TEMPERATURE, "\u00b0C", SensorStateClass.MEASUREMENT),
+    "C": (SensorDeviceClass.TEMPERATURE, "\u00b0C", SensorStateClass.MEASUREMENT),
+    "°C": (SensorDeviceClass.TEMPERATURE, "\u00b0C", SensorStateClass.MEASUREMENT),
     "F_DEG": (SensorDeviceClass.TEMPERATURE, "\u00b0F", SensorStateClass.MEASUREMENT),
+    "K": (SensorDeviceClass.TEMPERATURE, "K", SensorStateClass.MEASUREMENT),
     "bar": (SensorDeviceClass.PRESSURE, "bar", SensorStateClass.MEASUREMENT),
     "%": (None, "%", SensorStateClass.MEASUREMENT),
     "l/min": (None, "L/min", SensorStateClass.MEASUREMENT),
@@ -31,8 +34,10 @@ UNIT_MAP: dict[str, tuple[SensorDeviceClass | None, str | None, SensorStateClass
     "Wh": (SensorDeviceClass.ENERGY, "Wh", SensorStateClass.TOTAL_INCREASING),
     "W": (SensorDeviceClass.POWER, "W", SensorStateClass.MEASUREMENT),
     "kW": (SensorDeviceClass.POWER, "kW", SensorStateClass.MEASUREMENT),
-    "mins": (SensorDeviceClass.DURATION, "min", None),
-    "hours": (SensorDeviceClass.DURATION, "h", None),
+    "mins": (SensorDeviceClass.DURATION, "min", SensorStateClass.MEASUREMENT),
+    "min": (SensorDeviceClass.DURATION, "min", SensorStateClass.MEASUREMENT),
+    "hours": (SensorDeviceClass.DURATION, "h", SensorStateClass.TOTAL_INCREASING),
+    "h": (SensorDeviceClass.DURATION, "h", SensorStateClass.TOTAL_INCREASING),
 }
 
 
@@ -60,6 +65,13 @@ def _make_name(path: str) -> str:
     return " ".join(name_parts) if name_parts else path
 
 
+# Path patterns that should have a state class even without a unit
+PATH_STATE_CLASS: dict[str, SensorStateClass] = {
+    "numberOfStarts": SensorStateClass.TOTAL_INCREASING,
+    "workingTime": SensorStateClass.TOTAL_INCREASING,
+}
+
+
 class MX400Sensor(MX400Entity, SensorEntity):
     """Dynamic sensor for any read-only MX400 resource."""
 
@@ -81,6 +93,13 @@ class MX400Sensor(MX400Entity, SensorEntity):
             self._attr_state_class = sc
         elif unit:
             self._attr_native_unit_of_measurement = unit
+
+        # Path-based state class fallback for counters without units
+        if self._attr_state_class is None:
+            for pattern, sc in PATH_STATE_CLASS.items():
+                if pattern in resource_path:
+                    self._attr_state_class = sc
+                    break
 
     @property
     def native_value(self) -> Any:
