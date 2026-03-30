@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Buderus MX400 Gateway",
+        "description": "Enter your gateway ID (printed on the MX400 device sticker).",
+        "data": {
+          "gateway_id": "Gateway ID",
+          "poll_interval": "Poll interval (seconds)",
+          "client_id": "SingleKey ID Client ID"
+        }
+      }
+    },
+    "error": {
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This gateway is already configured.",
+      "no_url": "No redirect URL was received. Please try again.",
+      "no_code": "No authorization code found in the URL.",
+      "invalid_auth": "Authentication failed. Please try again.",
+      "cannot_connect": "Cannot connect to gateway. Check the gateway ID."
+    }
+  }
+}

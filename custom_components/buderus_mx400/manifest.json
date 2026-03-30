@@ -1,0 +1,15 @@
+{
+  "domain": "buderus_mx400",
+  "name": "Buderus MX400",
+  "codeowners": [],
+  "dependencies": [],
+  "documentation": "https://github.com/home-assistant/addons-example",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/home-assistant/addons-example/issues",
+  "requirements": ["requests>=2.28.0"],
+  "version": "1.0.0",
+  "config_flow": true,
+  "single_config_entry": true,
+  "icon": "mdi:radiator"
+}
