@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.loader import async_get_integration
 
 from .api import PointtClient, TokenManager
 from .const import (
@@ -25,21 +23,6 @@ from .coordinator import MX400Coordinator
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [Platform.SENSOR, Platform.NUMBER, Platform.SELECT]
-
-
-async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Register static files for the integration icon."""
-    hass.http.register_static_path(
-        f"/api/buderus_mx400/icon.png",
-        str(Path(__file__).parent / "icon.png"),
-        cache_headers=True,
-    )
-    hass.http.register_static_path(
-        f"/api/buderus_mx400/logo.png",
-        str(Path(__file__).parent / "logo.png"),
-        cache_headers=True,
-    )
-    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
