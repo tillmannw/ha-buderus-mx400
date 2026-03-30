@@ -85,6 +85,8 @@ class MX400Sensor(MX400Entity, SensorEntity):
         name = _make_name(resource_path)
         super().__init__(coordinator, resource_path, name, gateway_id)
 
+        self._attr_state_class = None
+
         unit = payload.get("unitOfMeasure")
         if unit and unit in UNIT_MAP:
             dc, native_unit, sc = UNIT_MAP[unit]
